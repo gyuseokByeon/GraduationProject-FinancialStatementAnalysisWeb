@@ -1,8 +1,7 @@
 from django.contrib import admin
-
-
 from . import models
 
-@admin.register(models.Corp)
-class CustomUserAdmin(admin.ModelAdmin):
+
+@admin.register(models.Stock)
+class StockAdmin(admin.ModelAdmin):
     pass

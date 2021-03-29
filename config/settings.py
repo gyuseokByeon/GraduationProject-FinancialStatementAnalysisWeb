@@ -40,10 +40,15 @@ DJANGO_APPS = [
 ]
 
 PROJECT_APPS = [
+    'core.apps.CoreConfig',
     'users.apps.UsersConfig',
-    'corps.app.CorpsConfig',
-    'stocks.app.StocksConfig',
-    'income_states.app.Config',
+    'corps.apps.CorpsConfig',
+    'stocks.apps.StocksConfig',
+    'income_states.apps.IncomeStatesConfig',
+    'financial_statements.apps.FinancialStatementsConfig',
+    'lists.apps.ListsConfig',
+    'reviews.apps.ReviewsConfig',
+    'discussions.apps.DiscussionsConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS

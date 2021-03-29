@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block page_title %}home{% endblock page_title %}
+
+{% block content %}
+
+
+        <ul>
+          {% for corp in corp_list %}
+            <li>
+              {{ corp.corp_code }}, {{ corp.corp_name }}
+            </li>
+          {% endfor %}
+        </ul>
+
+{% endblock content %}
