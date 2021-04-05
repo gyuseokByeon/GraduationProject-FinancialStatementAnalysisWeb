@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block page_title %}home{% endblock page_title %}
+
+{% block content %}
+    <span class="flex font-extrabold text-5xl">{{corp.corp_code}}</span>
+    <span class="flex font-extrabold text-5xl">{{corp.corp_name}}</span>
+
+    <div id="container" class="chart"></div>
+
+    <script type="text/javascript" src="/static/js/example.js"></script>
+{% endblock content %}

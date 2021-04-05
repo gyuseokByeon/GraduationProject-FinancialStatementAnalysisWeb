@@ -7,9 +7,9 @@
 
         <ul>
           {% for corp in corp_list %}
-            <li>
+            <a href="{% url 'corps:corp-detail' corp.corp_code %}"><li>
               {{ corp.corp_code }}, {{ corp.corp_name }}
-            </li>
+            </li></a>
           {% endfor %}
         </ul>
 

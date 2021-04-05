@@ -6,7 +6,7 @@ from . import managers
 #주가
 class Stock(models.Model):
     class Meta:
-        unique_together = (('code', 'date'),)
+        unique_together = (('code_id', 'date'),)
 
 
     #복합키
@@ -34,3 +34,6 @@ class Stock(models.Model):
     volume = models.BigIntegerField()
 
     objects = managers.CustomModelManager()
+
+    def __str__(self):
+        return self.code.corp_name+ " " + str(self.date)

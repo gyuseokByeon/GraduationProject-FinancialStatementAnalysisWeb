@@ -1,5 +1,7 @@
 from django.shortcuts import reverse
 from django.db import models
+
+
 from . import managers
 
 #기업
@@ -12,6 +14,9 @@ class Corp(models.Model):
     #기업명
     corp_name = models.CharField(max_length=50)
 
-
     objects = managers.CustomModelManager()
 
+    last_update = models.DateField(null=True)
+
+    def __str__(self):
+        return self.corp_name
