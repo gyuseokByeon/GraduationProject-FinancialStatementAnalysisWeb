@@ -15,6 +15,8 @@ class Stock(models.Model):
     )
     date = models.DateField()
 
+    datestamp = models.BigIntegerField()
+
     #시가
     open = models.BigIntegerField()
 

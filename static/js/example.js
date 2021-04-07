@@ -1,7 +1,7 @@
-Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', function (data) {
 
     // split the data set into ohlc and volume
-    var ohlc = [],
+    let data = {{stocks|safe}},
+        ohlc = [],
         volume = [],
         dataLength = data.length,
         // set the allowed units for data grouping
@@ -90,4 +90,3 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             }
         }]
     });
-});
