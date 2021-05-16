@@ -8,11 +8,10 @@ class Financial(models.Model):
         unique_together = (('code', 'date'),)
 
 
-    #복합키
-    code = models.ForeignKey(
-        'corps.Corp', related_name='financials', on_delete=models.CASCADE
-    )
-    date = models.DateField()
+    code = models.CharField(
+        max_length=20)
+
+    date = models.IntegerField()
 
     #총자산
     total_asset = models.BigIntegerField()

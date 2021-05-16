@@ -13,9 +13,10 @@ class Stock(models.Model):
     code = models.ForeignKey(
         'corps.Corp', related_name='stocks', on_delete=models.CASCADE
     )
+
     date = models.DateField()
 
-    datestamp = models.BigIntegerField()
+    datestamp = models.BigIntegerField(null=True)
 
     #시가
     open = models.BigIntegerField()

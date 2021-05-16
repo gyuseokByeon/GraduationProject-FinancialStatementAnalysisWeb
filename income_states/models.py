@@ -9,10 +9,9 @@ class Income(models.Model):
 
 
     #복합키
-    code = models.ForeignKey(
-        'corps.Corp', related_name='incomes', on_delete=models.CASCADE
-    )
-    date = models.DateField()
+    code = models.CharField(
+        max_length=20)
+    date = models.IntegerField()
 
     #매출액
     revenue = models.BigIntegerField()
@@ -29,10 +28,11 @@ class Income(models.Model):
     #영업이익
     operating_profit = models.BigIntegerField()
 
+    #금융수익
+    financial_income = models.BigIntegerField(null=True)
+
     #당기순이익
     net_income = models.BigIntegerField()
-
-
 
 
     objects = managers.CustomModelManager()

@@ -1,12 +1,136 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block page_title %}home{% endblock page_title %}
 
 {% block content %}
-    <span class="flex font-extrabold text-5xl">{{corp.corp_code}}</span>
-    <span class="flex font-extrabold text-5xl">{{corp.corp_name}}</span>
+    <div class="flex items-end justify-center py-10">
+    <span class=" font-extrabold text-5xl px-5">{{corp.corp_name}}</span>
+    <span class="text-2xl">{{corp.corp_code}}</span>
+    </div>
+    <div id="container" class="container mx-auto border-double border-4"></div>
 
-    <div id="container" class="chart"></div>
+    <div class="py-10"></div>
+
+    <!-- Ajax를 통한 재무상태표 or 손익계산서 테이블 생성-->
+
+    <input type="button" id="finance" value="재무상태표" class="w-1/5">
+    <input type="button" id="income" value="손익계산서" class="w-1/5">
+    <table id="table1"></table>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+
+    <!-- Ajax를 위한 Jquery CDN -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+    <!-- 재무상태표 Ajax 통신 -->
+    <script>
+        $('#finance').click(function (){
+            $.ajax({
+                url:"{% url 'corps:ajax-finance' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data){
+                    // 데이터 json으로 변환
+                    var json = JSON.parse(data)
+
+                    // table 태그 클래스 추가 및 열 추가
+                    $('#table1').addClass("table table-dark mx-auto w-50")
+                    var init ="<thead>\n" +
+                        "        <tr>\n" +
+                        "          <th scope=\"col\">날짜</th>\n" +
+                        "          <th scope=\"col\">총자산</th>\n" +
+                        "          <th scope=\"col\">유동자산</th>\n" +
+                        "          <th scope=\"col\">비유동자산</th>\n" +
+                        "          <th scope=\"col\">총부채</th>\n" +
+                        "          <th scope=\"col\">유동부채</th>\n" +
+                        "          <th scope=\"col\">비유동부채</th>\n" +
+                        "          <th scope=\"col\">총자본</th>\n" +
+                        "          <th scope=\"col\">지배주주지분</th>\n" +
+                        "          <th scope=\"col\">비지배주주지분</th>\n" +
+                        "        </tr>\n" +
+                        "      </thead>";
+
+                    var str;
+
+                    // 재무상태표 table 항목 배열
+                    var arr = ['date', 'total_asset', 'current_asset', 'non_current_asset', 'total_liabilities', 'current_liabilities', 'non_current_liabilities', 'capital', 'controlling_share', 'non_controlling_share'];
+
+                    for(fin_state in json) {
+                        if (json[fin_state]['fields']['total_asset'] != 0) {
+                            str += "<tr>";
+                            arr.forEach(function (key) {
+                                str += "<td>" + json[fin_state]['fields'][key] + "</td>"
+                            });
+                            str += "</tr>";
+                        }
+                    }
+                    $('#table1').html(init + "<tbody>"+ str + "</tbody>")
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                    $('#example').html("통신 실패")
+                }
+            })
+        })
+    </script>
+
+    <!-- 손익계산서 Ajax 통신 -->
+    <script>
+        $('#income').click(function (){
+            $.ajax({
+                url:"{% url 'corps:ajax-income' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data){
+                    // 데이터 json으로 변환
+                    var json = JSON.parse(data)
+
+                    // table 태그 클래스 추가 및 열 추가
+                    $('#table1').addClass("table table-dark mx-auto w-50")
+                    var init = "<thead>\n" +
+                        "        <tr>\n" +
+                        "          <th scope=\"col\">날짜</th>\n" +
+                        "          <th scope=\"col\">매출액</th>\n" +
+                        "          <th scope=\"col\">매출원가</th>\n" +
+                        "          <th scope=\"col\">매출총이익</th>\n" +
+                        "          <th scope=\"col\">판관비</th>\n" +
+                        "          <th scope=\"col\">영업이익</th>\n" +
+                        "          <th scope=\"col\">금융수익</th>\n" +
+                        "          <th scope=\"col\">당기순이익</th>\n" +
+                        "        </tr>\n" +
+                        "      </thead>";
+
+                    var str;
+
+                    // 손익계산서 table 항목 배열
+                    var arr = ['date', 'revenue', 'cost', 'gross_profit', 'operating_expense', 'operating_profit', 'financial_income', 'net_income'];
+
+                    for(fin_state in json) {
+                        if (json[fin_state]['fields']['revenue'] != 0) {
+                            str += "<tr>";
+                            arr.forEach(function (key) {
+                                str += "<td>" + json[fin_state]['fields'][key] + "</td>"
+                            });
+                            str += "</tr>";
+                        }
+                    }
+                    $('#table1').html(init + "<tbody>"+ str + "</tbody>")
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                    $('#example').html("통신 실패")
+                }
+            })
+        })
+    </script>
+
+
 
     <script>
     let data = {{stocks|safe}},
@@ -24,11 +148,10 @@
 
         i = dataLength-1;
 
-    let date = new Date(data[dataLength-1][0]).getTime();
     for (i; 0 <= i; i -= 1) {
 
         ohlc.push([
-            date, // the date
+            data[i][0], // the date
             data[i][1], // open
             data[i][2], // high
             data[i][3], // low
@@ -36,23 +159,20 @@
         ]);
 
         volume.push([
-            date, // the date
+            data[i][0], // the date
             data[i][5] // the volumm
         ]);
-        date += 86400000;
     }
-
 
 
     // create the chart
     Highcharts.stockChart('container', {
-
         rangeSelector: {
             selected: 1
         },
 
         title: {
-            text: 'AAPL Historical'
+            text: '주가'
         },
 
         yAxis: [{
