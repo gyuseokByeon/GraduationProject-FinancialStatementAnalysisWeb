@@ -93,12 +93,12 @@ DATABASES = {
     'default': {
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'corpanalysissite',
-        'USER': 'root',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '3300',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'stockweb',
+        'USER': 'postgresql',
+        'PASSWORD': '12341234',
+        'HOST': 'stockweb.coctb1q6bnnb.ap-northeast-2.rds.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
