@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    Conversation
+{% endblock page_title %}
+
+
+
+{% block content %}
+
+    <div class="flex justify-between">
+        <span></span>
+        <h2 class="mt-10 font-bold text-4xl text-">{{discussion.topic}}</h2>
+        <span></span>
+    </div>
+
+    <div class="flex justify-between">
+        {% if user not in discussion.participants.all %}
+            <div class="ml-5 mt-14 block bg-gray-400 w-24 rounded-lg text-center font-bold" style="display: table">
+                <a href="{% url 'discussions:participate' discussion.pk %}" style="display: table-cell; vertical-align: middle;">Join</a>
+            </div>
+            {% else%}
+            <div class="ml-5 mt-14 block bg-gray-400 w-40 h-14 rounded-lg text-center font-bold" style="display: table">
+                <a style="display: table-cell; vertical-align: middle;">Already Join</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="container mx-auto my-10 mt-10 flex justify-between min-h-50vh">
+
+        <div class="flex-grow">
+        <div class="border bg-blue-100 rounded-xl ml-10 p-10 flex flex-col">
+                {% if discussion.messages.count == 0 %}
+                    no messages
+                {% else %}
+                    {% for message in discussion.messages.all  %}
+                        <div class="mb-10 {% if message.user.pk == user.pk %}
+                            self-end
+                            text-right
+                        {% endif %}">
+                            <span class="text-sm font-medium text-gray-600">{{message.user.last_name}}</span>
+                            <div class="mt-px p-5 w-56 rounded
+                                {% if message.user.pk != user.pk %}
+                                    bg-white
+                                    text-black
+                                {% else %}
+                                    bg-yellow-300
+                                {% endif %}
+                            ">{{message.message}}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+            {% if user in discussion.participants.all %}
+            <form class="mt-10 w-1/2 mx-auto" method="POST">
+                {% csrf_token %}
+                <input class="border-box mb-5" name="message" placeholder="Write a Message" required />
+                <button class="btn-link bg-green-400">Send Comment</button>
+            </form>
+            {% endif %}
+        </div>
+
+    </div>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block page_title %}home{% endblock page_title %}
+
+{% block content %}
+
+        <div class="w-full border-b border-black pb-2 font-bold text-4xl text-center">
+            <span>My Corps</span>
+        </div>
+
+        <ul>
+          {% for corp in user.lists.corp.all %}
+            <a href="{% url 'corps:corp-detail' corp.corp_code %}"><li class="text-center text-xl py-3">
+              {{ corp.corp_code }}, {{ corp.corp_name }}
+            </li></a>
+          {% endfor %}
+        </ul>
+{% endblock content %}

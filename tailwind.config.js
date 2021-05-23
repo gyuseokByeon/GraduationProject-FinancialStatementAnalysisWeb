@@ -12,6 +12,12 @@ module.exports = {
       minHeight: {
         "50vh": "50vh",
         "75vh": "75vh"
+      },
+      extend: {
+        backGroundImage: theme => ({
+          'hero-pattern': "url('/img/hero-pattern.svg')",
+         'footer-texture': "url('/img/footer-texture.png')",
+        })
       }
     }
   },

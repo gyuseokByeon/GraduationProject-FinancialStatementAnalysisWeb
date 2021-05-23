@@ -1,0 +1,14 @@
+{% extends "base_for_home.html" %}
+
+{% block page_title %}home{% endblock page_title %}
+
+{% block content %}
+
+    <div class="h-56"></div>
+    <form action="{% url 'core:corp-search' %}" method="get" style="ime-mode:active" class="mx-96 h-20">
+                    <input name="corp" type="text" placeholder="Search Your Stock!" class="">
+    </form>
+    <div class="h-80"></div>
+
+
+{% endblock content %}

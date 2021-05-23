@@ -1,30 +1,163 @@
 {% extends "base.html" %}
-{% load humanize %}
+{% load humanize fav_on %}
 
 {% block page_title %}home{% endblock page_title %}
 
 {% block content %}
     <div class="flex items-end justify-center py-10">
-    <span class=" font-extrabold text-5xl px-5">{{corp.corp_name}}</span>
-    <span class="text-2xl">{{corp.corp_code}}</span>
+        <span class=" font-extrabold text-5xl px-5">{{corp.corp_name}}</span>
+        <span class="text-2xl">{{corp.corp_code}}</span>
     </div>
+    {% on_favs corp as on_favs_boolean %}
+        {% if on_favs_boolean is None %}
+            <a class="block mb-10 w-1/2 text-teal-600 font-bold" href="{% url 'lists:fav' corp.corp_code %}?action=add">Save to Favourites</a>
+        {% else %}
+            <a class="block mb-10 w-1/2 text-teal-600 font-bold" href="{% url 'lists:fav' corp.corp_code %}?action=remove">Remove from Favourites</a>
+        {% endif %}
     <div id="container" class="container mx-auto border-double border-4"></div>
 
-    <div class="py-10"></div>
+    <div class="border-t mb-10 mt-20 mx-auto w-11/12"></div>
 
     <!-- Ajax를 통한 재무상태표 or 손익계산서 테이블 생성-->
+    <div class="container mb-5">
+        <input type="button" id="finance" value="재무상태표" class="w-40 text-center rounded-md margin mx-6">
+        <input type="button" id="income" value="손익계산서" class="w-40 text-center rounded-md">
+    </div>
+    <div class="container">
+        <button class="pl-14 font-bold"  type="button" onclick="fnExcelReport('table1','title');">Excel Download</button>
+    </div>
+    <table id="table1" class="table table-hover mx-auto w-11/12 rounded-lg table-striped">
+        <thead>
+            <tr>
+                <th scope=\"col\">날짜</th>
+                <th scope=\"col\">총자산</th>
+                <th scope=\"col\">유동자산</th>
+                <th scope=\"col\">비유동자산</th>
+                <th scope=\"col\">총부채</th>
+                <th scope=\"col\">유동부채</th>
+                <th scope=\"col\">비유동부채</th>
+                <th scope=\"col\">총자본</th>
+                <th scope=\"col\">지배주주지분</th>
+                <th scope=\"col\">비지배주주지분</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for finance in finances  %}
+                {% if finance.total_asset != 0 %}
+                    <tr>
+                       <td>{{ finance.date }}</td>
+                       <td>{{ finance.total_asset | intcomma}}</td>
+                       <td>{{ finance.current_asset | intcomma}}</td>
+                       <td>{{ finance.non_current_asset | intcomma}}</td>
+                       <td>{{ finance.total_liabilities | intcomma}}</td>
+                       <td>{{ finance.current_liabilities | intcomma}}</td>
+                       <td>{{ finance.non_current_liabilities | intcomma}}</td>
+                       <td>{{ finance.capital | intcomma}}</td>
+                       <td>{{ finance.controlling_share | intcomma}}</td>
+                       <td>{{ finance.non_controlling_share | intcomma}}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
 
-    <input type="button" id="finance" value="재무상태표" class="w-1/5">
-    <input type="button" id="income" value="손익계산서" class="w-1/5">
-    <table id="table1"></table>
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+    <div class="my-10"></div>
 
-    <!-- Ajax를 위한 Jquery CDN -->
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <div id="graphButton" class="container">
+        <input type="button" id="asset" value="자산" class="h-16 w-40 text-center rounded-md margin mx-6">
+        <input type="button" id="liability" value="부채" class="h-16 w-40 text-center rounded-md mx-6">
+        <input type="button" id="capital" value="자본" class="h-16 w-40 text-center rounded-md mx-6">
+    </div>
+
+    <div class="my-8"></div>
+
+    <div id="graph_div" class="container w-2/4 h-3/4 mb-10 rounded-lg">
+         <canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>
+    </div>
+
+
+
+
+    <div class="border-t py-7 mx-auto w-11/12"></div>
+
+
+    <!-- Ajax를 통한 재무상태표 or 손익계산서 와 주가 상관관계 분석-->
+    <div class="container mb-5">
+    <input type="button" id="finance_analysis" value="재무상태표" class="w-40 text-center rounded-md margin mx-6">
+    <input type="button" id="income_analysis" value="손익계산서" class="w-40 text-center rounded-md">
+    <p id="cov_analysis" class="mt-10"></p>
+    </div>
+
+
+
+    <div class="my-8"></div>
+
+    <div id="chartReport" class="container w-2/4 h-3/4 mb-10 rounded-lg">
+         <canvas id="myChart" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>
+     </div>
+
+    <div class="border-t py-7 mx-auto w-11/12"></div>
+
+    <div class="justify-center mx-auto w-11/12">
+        <a href="{% url 'discussions:create' corp.corp_code %}" class="block bg-gray-400 w-40 rounded-lg text-center text-xl font-bold">Create Discussion</a>
+            <div class="mt-3"></div>
+            <div class="flex flex-col items-center">
+            {% for dis in corp.discussions.all %}
+            <div  class="block font-bold w-7/12 h-14 text-center rounded-2xl mt-3 bg-blue-300 align-middle"  style="display: table;">
+                <span class="w-full text-xl" style="display: table-cell; vertical-align: middle;"><a  href="{% url 'discussions:go' dis.pk %}">{{dis.topic}}<span class="text-sm ml-4">(참가자: {{ dis.count_participants }}명)</span> </a></span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class=" h-20"></div>
+
+    </div>
+
+
+
+
+    <!-- table to excel -->
+    <script>
+        function fnExcelReport(id, title) {
+        var tab_text = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
+        tab_text = tab_text + '<head><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
+        tab_text = tab_text + '<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>'
+        tab_text = tab_text + '<x:Name>Test Sheet</x:Name>';
+        tab_text = tab_text + '<x:WorksheetOptions><x:Panes></x:Panes></x:WorksheetOptions></x:ExcelWorksheet>';
+        tab_text = tab_text + '</x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body>';
+        tab_text = tab_text + "<table border='1px'>";
+        var exportTable = $('#' + id).clone();
+        exportTable.find('input').each(function (index, elem) { $(elem).remove(); });
+        tab_text = tab_text + exportTable.html();
+        tab_text = tab_text + '</table></body></html>';
+        var data_type = 'data:application/vnd.ms-excel';
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+        var fileName = title + '.xls';
+        //Explorer 환경에서 다운로드
+        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+        if (window.navigator.msSaveBlob) {
+        var blob = new Blob([tab_text], {
+        type: "application/csv;charset=utf-8;"
+        });
+        navigator.msSaveBlob(blob, fileName);
+        }
+        } else {
+        var blob2 = new Blob([tab_text], {
+        type: "application/csv;charset=utf-8;"
+        });
+        var filename = fileName;
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob2);
+        elem.download = filename;
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
+        }
+        }
+    </script>
+
+
 
     <!-- 재무상태표 Ajax 통신 -->
     <script>
@@ -33,11 +166,18 @@
                 url:"{% url 'corps:ajax-finance' corp.corp_code %}",
                 dataType: 'json',
                 success: function(data){
+                    // graphButton 교체
+                    var cell = document.getElementById("graphButton"); while ( cell.hasChildNodes() ) { cell.removeChild( cell.firstChild ); }
+
+                    document.querySelector("#graphButton").innerHTML =  '<input type="button" id="asset" value="자산" class="h-16 w-40 text-center rounded-md margin mx-6">' +
+                                                                        '<input type="button" id="liability" value="부채" class="h-16 w-40 text-center rounded-md mx-6">' +
+                                                                        '<input type="button" id="capital" value="자본" class="h-16 w-40 text-center rounded-md mx-6">';
+
+
                     // 데이터 json으로 변환
                     var json = JSON.parse(data)
 
                     // table 태그 클래스 추가 및 열 추가
-                    $('#table1').addClass("table table-dark mx-auto w-50")
                     var init ="<thead>\n" +
                         "        <tr>\n" +
                         "          <th scope=\"col\">날짜</th>\n" +
@@ -62,12 +202,16 @@
                         if (json[fin_state]['fields']['total_asset'] != 0) {
                             str += "<tr>";
                             arr.forEach(function (key) {
-                                str += "<td>" + json[fin_state]['fields'][key] + "</td>"
+                                if(key == "date"){
+                                    str += "<td>" + json[fin_state]['fields'][key].toString().slice(0, 4)+"년 "+json[fin_state]['fields'][key].toString().slice(4,)+"월" + "</td>"
+                                }else{
+                                    str += "<td>" + json[fin_state]['fields'][key].toLocaleString() + "</td>"
+                                }
                             });
                             str += "</tr>";
                         }
                     }
-                    $('#table1').html(init + "<tbody>"+ str + "</tbody>")
+                    $('#table1').html(init + "<tbody>"+ str + "<td align='right' colspan='10'>(단위: 1,000원)</td>" + "</tbody>")
 
                 },
                 error: function (request, status, error){
@@ -86,11 +230,21 @@
                 url:"{% url 'corps:ajax-income' corp.corp_code %}",
                 dataType: 'json',
                 success: function(data){
+                    // graphButton 교체
+                    var cell = document.getElementById("graphButton"); while ( cell.hasChildNodes() ) { cell.removeChild( cell.firstChild );}
+
+                    document.querySelector("#graphButton").innerHTML =  '<input type="button" id="revenue" value="매출액" class="h-16 w-40 text-center rounded-md margin mx-6">'+
+                                                                        '<input type="button" id="cost" value="매출원가" class="h-16 w-40 text-center rounded-md mx-6">' +
+                                                                        '<input type="button" id="gross_profit" value="매출총이익" class="h-16 w-40 text-center rounded-md mx-6">' +
+                                                                        '<input type="button" id="operating_expense" value="판관비" class="h-16 w-40 text-center rounded-md margin mx-6">' +
+                                                                        '<input type="button" id="operating_profit" value="영업이익" class="h-16 w-40 text-center rounded-md mx-6">' +
+                                                                        '<input type="button" id="financial_income" value="금융수익" class="h-16 w-40 text-center rounded-md mx-6">' +
+                                                                        '<input type="button" id="net_income" value="당기순이익" class="h-16 w-40 text-center rounded-md margin mx-6">';
+
                     // 데이터 json으로 변환
                     var json = JSON.parse(data)
 
                     // table 태그 클래스 추가 및 열 추가
-                    $('#table1').addClass("table table-dark mx-auto w-50")
                     var init = "<thead>\n" +
                         "        <tr>\n" +
                         "          <th scope=\"col\">날짜</th>\n" +
@@ -113,12 +267,16 @@
                         if (json[fin_state]['fields']['revenue'] != 0) {
                             str += "<tr>";
                             arr.forEach(function (key) {
-                                str += "<td>" + json[fin_state]['fields'][key] + "</td>"
+                                if(key == "date"){
+                                    str += "<td>" + json[fin_state]['fields'][key].toString().slice(0, 4)+"년 "+json[fin_state]['fields'][key].toString().slice(4,)+"월" + "</td>"
+                                }else{
+                                    str += "<td>" + json[fin_state]['fields'][key].toLocaleString() + "</td>"
+                                }
                             });
                             str += "</tr>";
                         }
                     }
-                    $('#table1').html(init + "<tbody>"+ str + "</tbody>")
+                    $('#table1').html(init + "<tbody>"+ str + "<td align='right' colspan='10'>(단위: 1,000원)</td>" + "</tbody>")
 
                 },
                 error: function (request, status, error){
@@ -130,8 +288,708 @@
         })
     </script>
 
+    <!-- 재무상태표 / 주가 상관관계 분석 -->
+    <script>
+        $('#finance_analysis').click(function (){
+            $.ajax({
+                url:"{% url 'corps:ajax-finance-analysis' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                    if(data2['winner'] == "부족") {
+                        $('#cov_analysis').addClass("text-xl")
+                        $('#cov_analysis').html("상관 분석을 수행하기에 데이터가 부족합니다.")
+                    }else {
+                        $('#myChart').addClass('bg-gray-200')
+                        $('#cov_analysis').addClass("text-xl")
+                        $('#cov_analysis').html("가장 상관관계가 강한 항목은 " + data2['winner'] + "입니다." + "(상관계수: " + data2['value'] + ")")
+
+                        // 산점도 그리기
 
 
+                        const labels = [];
+                        const data = {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Dataset 1',
+                                    data: data2['list'],
+                                    borderColor: 'rgb(255, 99, 132)',
+                                    backgroundColor: 'rgb(255, 99, 132)',
+                                }
+                            ]
+                        };
+
+                        const config = {
+                            type: 'scatter',
+                            data: data,
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: data2['winner']+"와 주가 산점도",
+                                        font: {size: 18}
+                                    }
+                                }
+                            },
+                        };
+                        $("#myChart").remove();
+                        document.querySelector("#chartReport").innerHTML = '<canvas id="myChart" class="w-2/4 h-96 mb-10 rounded-lg bg-gray-200 p-3"></canvas>';
+
+                        var myChart = new Chart(
+                                        document.getElementById('myChart'),
+                                        config
+                                    );
+
+                    }
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 손익계산서 / 주가 상관관계 분석 -->
+    <script>
+        $('#income_analysis').click(function (){
+            $.ajax({
+                url:"{% url 'corps:ajax-income-analysis' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                    if(data2['winner'] == "부족") {
+                        $('#cov_analysis').addClass("text-xl")
+                        $('#cov_analysis').html("상관 분석을 수행하기에 데이터가 부족합니다.")
+                    }else {
+                        $('#cov_analysis').addClass("text-xl")
+                        $('#cov_analysis').html("가장 상관관계가 강한 항목은 " + data2['winner'] + "입니다." + "(상관계수: " + data2['value'] + ")")
+
+                        // 산점도 그리기
+
+                        const labels = [];
+                        const data = {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Dataset 1',
+                                    data: data2['list'],
+                                    borderColor: 'rgb(255, 99, 132)',
+                                    backgroundColor: 'rgb(255, 99, 132)',
+                                }
+                            ]
+                        };
+
+                        const config = {
+                            type: 'scatter',
+                            data: data,
+                            options: {
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: data2['winner']+"와 주가 산점도",
+                                        font: {size: 18}
+                                    }
+                                }
+                            },
+                        };
+
+                        $("#myChart").remove();
+                        document.querySelector("#chartReport").innerHTML = '<canvas id="myChart" class="w-2/4 h-96 mb-10 rounded-lg bg-gray-200 p-3"></canvas>';
+
+                        var myChart = new Chart(
+                                        document.getElementById('myChart'),
+                                        config
+                                    );
+
+                    }
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 재무상태표 / 자산 그래프 -->
+    <script>
+        $(document).on('click', '#asset', function (){
+            $.ajax({
+                url:"{% url 'corps:asset-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['asset'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '자산 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 재무상태표 / 부채 그래프 -->
+    <script>
+        $(document).on('click', '#liability', function (){
+            $.ajax({
+                url:"{% url 'corps:liability-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['liability'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '부채 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 재무상태표 / 자본 그래프 -->
+    <script>
+        $(document).on('click', '#capital', function (){
+            $.ajax({
+                url:"{% url 'corps:capital-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['capital'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '자본 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+
+
+    <!-- 손익계산서 / 매출액 그래프 -->
+    <script>
+        $(document).on('click', '#revenue', function (){
+            $.ajax({
+                url:"{% url 'corps:revenue-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['revenue'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '매출액 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 손익계산서 / 매출원가 그래프 -->
+    <script>
+        $(document).on('click', '#cost', function (){
+            $.ajax({
+                url:"{% url 'corps:cost-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['cost'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '매출원가 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 손익계산서 / 매출총이익 그래프 -->
+    <script>
+        $(document).on('click', '#gross_profit', function (){
+            $.ajax({
+                url:"{% url 'corps:gross_profit-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['gross_profit'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '매출총이익 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 손익계산서 / 영업이익 그래프 -->
+    <script>
+        $(document).on('click', '#operating_profit', function (){
+            $.ajax({
+                url:"{% url 'corps:operating_profit-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['operating_profit'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '영업이익 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 손익계산서 / 영업비용 그래프 -->
+    <script>
+        $(document).on('click', '#operating_expense', function (){
+            $.ajax({
+                url:"{% url 'corps:operating_expense-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['operating_expense'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '영업비용 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 손익계산서 / 금융수익 그래프 -->
+    <script>
+        $(document).on('click', '#financial_income', function (){
+            $.ajax({
+                url:"{% url 'corps:financial_income-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['financial_income'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '금융수익 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+    <!-- 손익계산서 / 당기순이익 그래프 -->
+   <script>
+        $(document).on('click', '#net_income', function (){
+            $.ajax({
+                url:"{% url 'corps:net_income-graph' corp.corp_code %}",
+                dataType: 'json',
+                success: function(data2){
+                <!-- 그래프 그리기 -->
+
+                const data = {
+                  labels: data2['date'],
+                  datasets: [
+                    {
+                      label: 'Dataset 1',
+                      data: data2['net_income'],
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgb(255, 99, 132)',
+                      yAxisID: 'y',
+                    }
+                  ]
+                };
+
+                const config = {
+                  type: 'line',
+                  data: data,
+                  options: {
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                      },
+                      title: {
+                        display: true,
+                        text: '당기순이익 그래프'
+                      }
+                    }
+                  },
+                };
+
+                $("#graph").remove();
+                document.querySelector("#graph_div").innerHTML = '<canvas id="graph" class="w-2/4 h-96 mb-10 rounded-lg"></canvas>';
+
+                  var myChart = new Chart(
+                    document.getElementById('graph'),
+                    config
+                  );
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                }
+            })
+        })
+    </script>
+
+
+
+
+    <!-- 주가 Data -->
     <script>
     let data = {{stocks|safe}},
         ohlc = [],
@@ -223,6 +1081,5 @@
             }
         }]
     });
-
     </script>
 {% endblock content %}

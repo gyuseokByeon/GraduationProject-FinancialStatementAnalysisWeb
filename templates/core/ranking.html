@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load list_item_tags %}
+
+{% block page_title %}Rank{% endblock page_title %}
+
+{% block content %}
+        <div class="w-full border-b border-black py-5 font-bold text-6xl text-center">
+            <span>랭킹 시스템</span>
+            <div class="my-3"></div>
+            <form class="w-60">
+              <select id="benchmark" name="benchmark" style="vertical-align: top; text-align-last: center;" class="h-16 rounded-md ml-4">
+                <option value="revenue_growth" selected>매출액 성장률</option>
+                <option value="net_income_growth">당기순이익 성장률</option>
+              </select>
+            </form>
+        </div>
+
+        <table id="table" class="table table-hover mx-auto w-11/12 rounded-lg table-striped">
+            <thead>
+                    <tr>
+                        <th scope=\"col\">순위</th>
+                        <th scope=\"col\">기업 명</th>
+                        <th scope=\"col\">매출액 성장률</th>
+                    </tr>
+            </thead>
+            <tbody>
+                {% for revenue in revenue_growth %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'corps:corp-detail' revenue|select_item:0 %}">{{ revenue | select_item:1}}</a></td>
+                        <td>{{ revenue | select_item:2  }} %</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+    <!-- 재무상태표 Ajax 통신 -->
+    <script>
+        $('#benchmark').change(function (){
+            var mark = $(this).val();
+
+
+            // 매출액 성장률
+            if(mark == 'revenue_growth'){
+                $.ajax({
+                url:"{% url 'core:ajax-revenue-growth' %}",
+                dataType: 'json',
+                success: function(data){
+
+                    var json = JSON.parse(data)
+
+                    // table 태그 클래스 추가 및 열 추가
+                    var init ="<thead>\n" +
+                        "        <tr>\n" +
+                        "          <th scope=\"col\">순위</th>\n" +
+                        "          <th scope=\"col\">기업 명</th>\n" +
+                        "          <th scope=\"col\">매출액 성장률</th>\n" +
+                        "        </tr>\n" +
+                        "      </thead>";
+
+                    var str = '<tbody>';
+
+                    for(var i = 0; i < 100; i++) {
+                        str += '<tr>';
+                        str += '<td>' + (i+1) + '</td>';
+                        str += '<td>' + "<a href='/corps/"+ json[i][0]+"/" +"'>"+ json[i][1] + "</a>" +'</td>';
+                        str += '<td>' + json[i][2]+ ' %' + '</td>';
+                        str += '</tr>';
+
+                    }
+                    str += '</tbody>'
+
+                    $('#table').html(init + str);
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                    $('#example').html("통신 실패")
+                }
+            })
+            }else if(mark == 'net_income_growth'){
+                $.ajax({
+                url:"{% url 'core:ajax-net-income-growth' %}",
+                dataType: 'json',
+                success: function(data){
+
+
+                    var json = JSON.parse(data)
+
+                    // table 태그 클래스 추가 및 열 추가
+                    var init ="<thead>\n" +
+                        "        <tr>\n" +
+                        "          <th scope=\"col\">순위</th>\n" +
+                        "          <th scope=\"col\">기업 명</th>\n" +
+                        "          <th scope=\"col\">당기순이익 성장률</th>\n" +
+                        "        </tr>\n" +
+                        "      </thead>";
+
+                    var str = '<tbody>';
+
+                    for(var i = 0; i < 100; i++) {
+                        str += '<tr>';
+                        str += '<td>' + (i+1) + '</td>';
+                        str += '<td>' + "<a href='/corps/"+ json[i][0]+"/" +"'>"+ json[i][1] + "</a>" +'</td>';
+                        str += '<td>' + json[i][2]+ ' %' + '</td>';
+                        str += '</tr>';
+
+                    }
+                    str += '</tbody>'
+
+                    $('#table').html(init + str);
+
+                },
+                error: function (request, status, error){
+                    alert('ajax 통신 실패...')
+                    alert(error)
+                    $('#example').html("통신 실패")
+                }
+            })
+
+            }
+        })
+    </script>
+
+
+
+
+
+
+{% endblock content %}

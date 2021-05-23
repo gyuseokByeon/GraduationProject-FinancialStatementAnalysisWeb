@@ -30,7 +30,7 @@ urlpatterns = [
     path("users/", include('users.urls', namespace='users')),
     path("reviews/", include('reviews.urls', namespace='reviews')),
     path("discussions/", include('discussions.urls', namespace='discussions')),
-    path("lists/", include('discussions.urls', namespace='lists')),
+    path("lists/", include('lists.urls', namespace='lists')),
 ]
 
 

@@ -1,10 +1,14 @@
 <ul class="flex items-center text-sm font-medium h-full" >
-        {% if user.is_authenticated %}
-        <li class="nav_link"><a href=""></a></li>
-        <li class="nav_link"><a href="{{ user.get_absolute_url }}">Profile</a></li>
-        <li class="nav_link"><a href="{% url 'users:logout' %}">Logout</a></li>
-        {% else %}
-        <li class="nav_link"><a href="{% url 'users:log-in' %}">Login</a></li>
-        <li class="nav_link"><a href="{% url 'users:sign-up' %}">Sign Up</a></li>
-        {% endif %}
+
+            {% if user.is_authenticated %}
+
+                <li class="nav_link"><a href="{% url 'lists:myCorp' %}">My Corp</a></li>
+                <li class="nav_link"><a href="{% url 'core:ranking' %}">Ranking</a></li>
+                <li class="nav_link"><a href="{{ user.get_absolute_url }}">Profile</a></li>
+                <li class="nav_link"><a href="{% url 'users:logout' %}">Logout</a></li>
+            {% else %}
+                <li class="nav_link"><a href="{% url 'users:log-in' %}">Login</a></li>
+                <li class="nav_link"><a href="{% url 'users:sign-up' %}">Sign Up</a></li>
+            {% endif %}
+
 </ul>
