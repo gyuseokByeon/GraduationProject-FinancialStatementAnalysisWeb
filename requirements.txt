@@ -23,7 +23,6 @@ pandas==1.2.3
 pathspec==0.5.9
 Pillow==8.1.2
 PyMySQL==1.0.2
-pypiwin32==223
 python-dateutil==2.8.1
 pytz==2021.1
 PyYAML==5.3.1
