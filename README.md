@@ -11,7 +11,7 @@
 ### 개인 투자자를 위한 재무제표 분석 및 시각화 웹 앱
 ### Financial statements analysis and visualization web apps for individual investors
 
-2021 한양대학교 Erica 캠퍼스 소프트웨어학부 졸업작품 (종합 평가 1위🥇 )
+2021 한양대학교 Erica 캠퍼스 소프트웨어학부 졸업작품 (종합 평가 1위🥇)
 
 
 </br>
@@ -19,7 +19,7 @@
 * #### :family: 개발자
   * 권우석
 
-* #### :computer: APP
+* #### :computer:
   * Language & Environment: HTML5, CSS, Python, Javascript
   * Frameworks: TailwindCss, Django
   * Library: pandas, numpy, jquery, etc...
@@ -28,4 +28,6 @@
   * AWS Elastic Beanstalk: 웹 서버
   * AWS RDS: DB 서버
 
-* #### :
+* #### :iphone: Crawler
+  * Periodic Crawler for stock price data: 네이버 금융 / 매일 오후 5시 / 시가, 종가, 저가, 고가, 거래량 
+  * Crawler: 금융감독원 Open API / 연 4회 / 재무상태표, 손익계산서 주요 항목
