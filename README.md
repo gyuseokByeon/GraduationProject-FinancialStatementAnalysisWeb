@@ -1,7 +1,5 @@
 # For The Ants
 
-[졸업작품 설명 (Click)](https://blog.naver.com/rnjsdntjr26/222387156770)
-
 ![issue_badge](https://img.shields.io/badge/python-3.8-blue?style=flat)
 ![issue_badge](https://img.shields.io/badge/django-3.7.1-blue?style=flat)
 ![issue_badge](https://img.shields.io/badge/tailwindcss-6.14.11-blue?style=flat)
@@ -38,3 +36,4 @@
 
 ## 1. 개요
 [![예제](http://img.youtube.com/vi/PR4RI2n3VL8/0.jpg)](https://youtu.be/PR4RI2n3VL8?t=0s) 
+[졸업작품 개발기 (Click)](https://blog.naver.com/rnjsdntjr26/222387156770)
