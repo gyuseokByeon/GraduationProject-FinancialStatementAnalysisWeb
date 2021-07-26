@@ -11,7 +11,7 @@
 ### 개인 투자자를 위한 재무제표 분석 및 시각화 웹 앱
 ### Financial statements analysis and visualization web apps for individual investors
 
-2021 한양대학교 Erica 캠퍼스 소프트웨어학부 졸업작품 (종합 평가 1위#### 🥇 )
+2021 한양대학교 Erica 캠퍼스 소프트웨어학부 졸업작품 (종합 평가 1위🥇 )
 
 
 </br>
