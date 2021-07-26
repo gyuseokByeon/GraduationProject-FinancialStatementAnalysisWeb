@@ -31,3 +31,10 @@
 * #### :iphone: Crawler
   * Periodic Crawler for stock price data: 네이버 금융 / 매일 오후 5시 / 시가, 종가, 저가, 고가, 거래량 
   * Crawler: 금융감독원 Open API / 연 4회 / 재무상태표, 손익계산서 주요 항목
+
+<hr/>
+
+</br>
+
+## 1. 개요
+[![예제](http://img.youtube.com/vi/PR4RI2n3VL8/0.jpg)](https://youtu.be/PR4RI2n3VL8?t=0s) 
