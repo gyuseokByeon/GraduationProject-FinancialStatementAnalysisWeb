@@ -35,5 +35,5 @@
 </br>
 
 ## 1. 개요
-[![예제](http://img.youtube.com/vi/PR4RI2n3VL8/0.jpg)](https://youtu.be/PR4RI2n3VL8?t=0s) 
-[졸업작품 개발기 (Click)](https://blog.naver.com/rnjsdntjr26/222387156770)
+[![예제](http://img.youtube.com/vi/PR4RI2n3VL8/0.jpg)](https://youtu.be/PR4RI2n3VL8?t=0s)   
+[졸업작품 개발기 (Click)](https://blog.naver.com/rnjsdntjr26/222387156770)  
