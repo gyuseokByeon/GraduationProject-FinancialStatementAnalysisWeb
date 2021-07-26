@@ -37,4 +37,4 @@
 </br>
 
 ## 1. 개요
-[![예제](http://img.youtube.com/vi/PR4RI2n3VL8/1.jpg)](https://youtu.be/PR4RI2n3VL8?t=0s) 
+[![예제](http://img.youtube.com/vi/PR4RI2n3VL8/0.jpg)](https://youtu.be/PR4RI2n3VL8?t=0s) 
