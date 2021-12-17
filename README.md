@@ -46,7 +46,7 @@
 ## 2. 프로젝트 구성도
 
   
-![project1](https://user-images.githubusercontent.com/62459196/146553494-26e1805d-9b90-4223-815d-f08f5bf04002.png)  
+![project1](https://github.com/egg528/egg528.github.io/blob/master/imgs/project1.png?raw=true)  
 
 
  ## 3. 주요 기능
