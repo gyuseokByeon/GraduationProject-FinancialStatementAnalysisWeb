@@ -7,11 +7,10 @@ class Financial(models.Model):
     class Meta:
         unique_together = (('code', 'date'),)
 
+    date = models.IntegerField()
 
     code = models.CharField(
         max_length=20)
-
-    date = models.IntegerField()
 
     #총자산
     total_asset = models.BigIntegerField()

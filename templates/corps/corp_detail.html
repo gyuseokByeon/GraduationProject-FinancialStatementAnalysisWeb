@@ -24,7 +24,7 @@
         <input type="button" id="income" value="손익계산서" class="w-40 text-center rounded-md">
     </div>
     <div class="container">
-        <button class="pl-14 font-bold"  type="button" onclick="fnExcelReport('table1','title');">Excel Download</button>
+        <button class="pl-14 font-bold"  type="button" onclick="fnExcelReport('table1','재무제표');">Excel Download</button>
     </div>
     <table id="table1" class="table table-hover mx-auto w-11/12 rounded-lg table-striped">
         <thead>
@@ -110,7 +110,6 @@
             {% endfor %}
         </div>
         <div class=" h-20"></div>
-
     </div>
 
 
@@ -1004,9 +1003,10 @@
             [1, 2, 3, 4, 6]
         ]],
 
-        i = dataLength-1;
+        len = dataLength;
 
-    for (i; 0 <= i; i -= 1) {
+
+    for (i = 0;i < len; i += 1) {
 
         ohlc.push([
             data[i][0], // the date

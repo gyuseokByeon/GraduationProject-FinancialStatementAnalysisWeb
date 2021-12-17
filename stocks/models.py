@@ -1,4 +1,3 @@
-from django.shortcuts import reverse
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from . import managers
@@ -9,14 +8,7 @@ class Stock(models.Model):
         unique_together = (('code_id', 'date'),)
 
 
-    #복합키
-    code = models.ForeignKey(
-        'corps.Corp', related_name='stocks', on_delete=models.CASCADE
-    )
-
     date = models.DateField()
-
-    datestamp = models.BigIntegerField(null=True)
 
     #시가
     open = models.BigIntegerField()
@@ -35,6 +27,12 @@ class Stock(models.Model):
 
     #거래량
     volume = models.BigIntegerField()
+
+    # 복합키
+    code_id = models.CharField(
+        max_length=20)
+
+    datestamp = models.BigIntegerField(null=True)
 
     objects = managers.CustomModelManager()
 

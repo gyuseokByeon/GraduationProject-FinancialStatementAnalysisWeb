@@ -11,6 +11,7 @@ class Income(models.Model):
     #복합키
     code = models.CharField(
         max_length=20)
+
     date = models.IntegerField()
 
     #매출액

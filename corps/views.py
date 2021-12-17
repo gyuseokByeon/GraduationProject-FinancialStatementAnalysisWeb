@@ -20,7 +20,7 @@ class CorpDetailView(DetailView):
         context = super(CorpDetailView, self).get_context_data(**kwargs)
 
         # 주가 데이터
-        stocks_query = stock_models.Stock.objects.filter(code=self.kwargs['corp_code'])
+        stocks_query = stock_models.Stock.objects.filter(code_id=self.kwargs['corp_code']).order_by('date')
         stocks_list = list(stocks_query.values_list('datestamp', 'open', 'high', 'low', 'close', 'volume'))
         stocks_json = json.dumps(stocks_list)
         context['stocks'] = stocks_json
@@ -63,7 +63,7 @@ def ajax_income_analysis(request, **kwargs):
     answer = {}
 
     # 2015년도 이후 주가 / 손익계산서 데이터 받아오기
-    stocks_query = stock_models.Stock.objects.filter(code = kwargs['corp_code'], date__range=["2015-01-01", "2021-05-01"]).order_by("date")
+    stocks_query = stock_models.Stock.objects.filter(code_id = kwargs['corp_code'], date__range=["2015-01-01", "2021-05-01"]).order_by("date")
     income_sta_query = income_sta_models.Income.objects.filter(code=kwargs['corp_code'], date__gte =201503 , date__lte =202012).order_by("date")
 
 
@@ -209,7 +209,7 @@ def ajax_finance_analysis(request, **kwargs):
     answer = {}
 
     # 2015년도 이후 주가 / 손익계산서 데이터 받아오기
-    stocks_query = stock_models.Stock.objects.filter(code = kwargs['corp_code'], date__range=["2015-01-01", "2021-05-01"]).order_by("date")
+    stocks_query = stock_models.Stock.objects.filter(code_id = kwargs['corp_code'], date__range=["2015-01-01", "2021-05-01"]).order_by("date")
     finance_sta_query = fi_sta_models.Financial.objects.filter(code=kwargs['corp_code'], date__gte =201503 , date__lte =202012).order_by("date")
 
 

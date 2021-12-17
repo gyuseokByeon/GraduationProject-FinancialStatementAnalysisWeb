@@ -12,4 +12,3 @@ class List(models.Model):
     corp = models.ManyToManyField("corps.Corp", blank=True)
 
     objects = managers.CustomModelManager()
-
