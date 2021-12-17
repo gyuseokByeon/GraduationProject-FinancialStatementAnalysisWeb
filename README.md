@@ -43,14 +43,23 @@
  
 
  
-## 2. 구성도
+## 2. 프로젝트 구성도
 
   
 ![project1](https://user-images.githubusercontent.com/62459196/146553494-26e1805d-9b90-4223-815d-f08f5bf04002.png)  
 
 
  ## 3. 주요 기능
+####    
+  
+![](https://github.com/egg528/egg528.github.io/blob/master/gifs/project1.gif?raw=true)  
 
+#### (1) 5개년 분기별 재무 데이터 엑셀 다운로드   
+![picture 3](https://user-images.githubusercontent.com/62459196/146550679-bfbf443a-bfd1-4e8d-9867-bb128774b4c0.png)
   
-  
- 
+#### (2) 주요 재무 항목 시각화
+![picture 4](https://user-images.githubusercontent.com/62459196/146550682-c77be4e0-b87e-4668-ac70-436f43318053.png)  
+
+#### (3) 주가와 상관관계가 가장 높은 재무 항목 제시 (기업별)
+
+  ![picture 5](https://user-images.githubusercontent.com/62459196/146550686-5ccbed5f-61d7-4bd6-b804-b3f122c1e925.png)
