@@ -36,7 +36,7 @@
 ## 1. 프로젝트 배경
 
   
-![picture 1](https://user-images.githubusercontent.com/62459196/146550617-d89d44b3-dcd6-4996-9d38-c3e295e4e75d.png)
+![picture 1](https://github.com/egg528/egg528.github.io/blob/master/imgs/picture%201.png?raw=true)
   
  - 졸업작품 중간 발표: [프로젝트 설명 영상(Click)](https://youtu.be/PR4RI2n3VL8?t=0s)  
  - 졸업작품 개발 후기: [문돌이의 SW학부 졸업작품 도전기 (Click)](https://blog.naver.com/rnjsdntjr26/222387156770)   
@@ -46,7 +46,7 @@
 ## 2. 프로젝트 구성도
 
   
-![project1](https://user-images.githubusercontent.com/62459196/146553494-26e1805d-9b90-4223-815d-f08f5bf04002.png)  
+![project1](https://github.com/egg528/egg528.github.io/blob/master/imgs/project1.png?raw=true)  
 
 
  ## 3. 주요 기능
@@ -59,9 +59,15 @@
 - 해당 기능을 통해 재무 분석을 위한 무의미한 반복 노동(재무제표 복.붙)을 없애, 개인투자자들은 간편하게 자신만의 기업 분석이 가능합니다.        
 
 
-#### (2) 주요 재무 항목 시각화
-![picture 4](https://user-images.githubusercontent.com/62459196/146550682-c77be4e0-b87e-4668-ac70-436f43318053.png)  
+#### (2) 주요 재무 항목 시각화  
+
+![picture 4](https://github.com/egg528/egg528.github.io/blob/master/imgs/picture%204.png?raw=true)    
+
 
 #### (3) 주가와 상관관계가 가장 높은 재무 항목 제시 (기업별)
+  
+![picture 5](https://github.com/egg528/egg528.github.io/blob/master/imgs/picture%205.png?raw=true)  
+  
+#### (4) 기업 랭킹 서비스
 
-  ![picture 5](https://user-images.githubusercontent.com/62459196/146550686-5ccbed5f-61d7-4bd6-b804-b3f122c1e925.png)
+![picture 5](https://github.com/egg528/egg528.github.io/blob/master/imgs/picture%206.png?raw=true)  
