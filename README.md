@@ -54,9 +54,11 @@
   
 ![](https://github.com/egg528/egg528.github.io/blob/master/gifs/project1.gif?raw=true)  
 
-#### (1) 5개년 분기별 재무 데이터 엑셀 다운로드   
-![picture 3](https://user-images.githubusercontent.com/62459196/146550679-bfbf443a-bfd1-4e8d-9867-bb128774b4c0.png)
-  
+#### (1) 5개년 분기별 재무 데이터 엑셀 다운로드
+- Periodic Crawler와 금융감독원 OPENAPI를 바탕으로 수집한 주가/재무 데이터 5개년치를 클릭 한번으로 다운받을 수 있는 기능
+- 해당 기능을 통해 재무 분석을 위한 무의미한 반복 노동(재무제표 복.붙)을 없애, 개인투자자들은 간편하게 자신만의 기업 분석이 가능합니다.        
+
+
 #### (2) 주요 재무 항목 시각화
 ![picture 4](https://user-images.githubusercontent.com/62459196/146550682-c77be4e0-b87e-4668-ac70-436f43318053.png)  
 
